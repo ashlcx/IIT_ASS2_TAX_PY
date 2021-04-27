@@ -11,9 +11,11 @@ class CLI:
         self.fIncome = 0
         self.strIncrement = "Annually"
         self.iIncrement = 6
-        self.bHECS = False
-        self.bNTFT = False
-        self.bSuper = False
+        self.dictOptions = {
+            "bHECS": False,
+            "bNTFT": False,
+            "bSuper": False
+        }
         self.bAllItemsSet = False
         self.iHours = 40
 
@@ -25,9 +27,10 @@ class CLI:
             self.checkValid()
             print("Pay Calculator V{}".format(constants.C_VERSION))
             print("1) Set Income (${})".format(self.fIncome))
-            print("2) Set Pay Increment ({})".format(self.strIncrement) if not self.strIncrement == "Hourly" else "2) Set Pay Increment ({} ({} Hours))".format(self.strIncrement, self.iHours))
+            print("2) Set Pay Increment ({})".format(self.strIncrement) if not self.strIncrement ==
+                  "Hourly" else "2) Set Pay Increment ({} ({} Hours))".format(self.strIncrement, self.iHours))
             print("3) Set Tax Options (HECS/HELP: {}, No Tax Free Threshold: {}, Include Superannuation: {})".format(
-                self.bHECS, self.bNTFT, self.bSuper))
+                self.dictOptions.get("bHECS"), self.dictOptions.get("bNTFT"), self.dictOptions.get("bSuper")))
             if self.bAllItemsSet:
                 print("4) Calculate")
                 iIncrement = 5
@@ -102,7 +105,7 @@ class CLI:
             elif(iInput < 0 or iInput > 6):
                 raise Exception("Value is Incorrect")
             else:
-                ## WHY NO SWITCH CASE PYTHON!!!
+                # WHY NO SWITCH CASE PYTHON!!!
                 self.iIncrement = iInput
                 if(iInput == 1):
                     self.strIncrement = "Hourly"
@@ -135,16 +138,18 @@ class CLI:
                     break
             except:
                 print("Invalid Hours Entered!!")
-    
+
     def setTaxOptions(self):
-        
+
         bContinue = True
         while(bContinue):
             self.clearScreen()
             print("Enter an input to toggle a tax option")
-            print("1) HECS/HELP ({})".format(self.bHECS))
-            print("2) No Tax Free Threshold ({})".format(self.bNTFT))
-            print("3) Salary Include Superannuation ({})".format(self.bSuper))
+            print("1) HECS/HELP ({})".format(self.dictOptions.get("bHECS")))
+            print("2) No Tax Free Threshold ({})".format(
+                self.dictOptions.get("bNTFT")))
+            print("3) Salary Include Superannuation ({})".format(
+                self.dictOptions.get("bSuper")))
             print("4) Back to Menu")
             strInput = input("Enter Selection: ")
             try:
@@ -156,11 +161,14 @@ class CLI:
                         bContinue = False
                         break
                     elif iInput == 1:
-                        self.bHECS = not self.bHECS
+                        self.dictOptions.update(
+                            {"bHECS": not self.dictOptions.get("bHECS")})
                     elif iInput == 2:
-                        self.bNTFT = not self.bNTFT
+                        self.dictOptions.update(
+                            {"bNTFT": not self.dictOptions.get("bNTFT")})
                     elif iInput == 3:
-                        self.bSuper = not self.bSuper
+                        self.dictOptions.update(
+                            {"bSuper": not self.dictOptions.get("bSuper")})
             except:
                 print("Invalid Input!!")
 
