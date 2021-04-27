@@ -1,38 +1,45 @@
 # Imports
-import constants
-import sys
 import os
+import sys
+
+import constants
+
 
 class CLI:
     def __init__(self):
-        
-        self.iIncome = 0
+
+        self.fIncome = 0
         self.strIncrement = "Annually"
+        self.iIncrement = 6
         self.bHECS = False
         self.bNTFT = False
         self.bSuper = False
         self.bAllItemsSet = False
+        self.iHours = 40
 
         self.cliMenu()
 
     def cliMenu(self):
-        print("Pay Calculator V{}".format(constants.C_VERSION))
-        print("1) Set Income (${})".format(self.iIncome))
-        print("2) Set Pay Increment ({})".format(self.strIncrement))
-        print("3) Set Tax Options (HECS/HELP: {}, No Tax Free Threshold: {}, Include Superannuation: {})".format(
-            self.bHECS, self.bNTFT, self.bSuper))
-        if self.bAllItemsSet:
-            print("4) Calculate")
-            iIncrement = 5
-        else:
-            iIncrement = 4
-        print("{}) Exit".format(str(iIncrement)))
-        
-        strSelection = "0"
-        while(not self.verifyIntSelection(strSelection)):
-            strSelection = input("Enter Selection: ")
+        while(True):
+            self.clearScreen()
+            self.checkValid()
+            print("Pay Calculator V{}".format(constants.C_VERSION))
+            print("1) Set Income (${})".format(self.fIncome))
+            print("2) Set Pay Increment ({})".format(self.strIncrement) if not self.strIncrement == "Hourly" else "2) Set Pay Increment ({} ({} Hours))".format(self.strIncrement, self.iHours))
+            print("3) Set Tax Options (HECS/HELP: {}, No Tax Free Threshold: {}, Include Superannuation: {})".format(
+                self.bHECS, self.bNTFT, self.bSuper))
+            if self.bAllItemsSet:
+                print("4) Calculate")
+                iIncrement = 5
+            else:
+                iIncrement = 4
+            print("{}) Exit".format(str(iIncrement)))
 
-    def verifyIntSelection(self, strSelection) -> bool:
+            strSelection = "0"
+            while(not self.verifyMenuInput(strSelection)):
+                strSelection = input("Enter Selection: ")
+
+    def verifyMenuInput(self, strSelection) -> bool:
         try:
             iStrSelection = int(strSelection)
         except:
@@ -40,14 +47,14 @@ class CLI:
         if(iStrSelection == 0):
             return False
         elif(iStrSelection == 1):
-            #TODO SetIncome Menu
-            print("SetIncomeMenu")
+            # print("SetIncomeMenu")
+            self.setIncomeMenu()
             return True
         elif(iStrSelection == 2):
-            print("setPayIncrement")
+            self.setPayIncrementMenu()
             return True
         elif(iStrSelection == 3):
-            print("SetTaxOptions")
+            self.setTaxOptions()
             return True
         elif(iStrSelection == 4 and self.bAllItemsSet):
             print("Calculate")
@@ -56,13 +63,113 @@ class CLI:
             sys.exit(0)
         else:
             return False
-    
+
     def setIncomeMenu(self):
-        cls
-        print("Income")
+        self.clearScreen()
+        bIntValid = False
+        while(not bIntValid):
+            strTempIncome = input("Enter Income for Time Period (${} {}):".format(
+                self.fIncome, self.strIncrement))
+            try:
+                fTemp = float(strTempIncome)
+                if(fTemp <= 0):
+                    raise Exception("Value must be positive")
+                else:
+                    self.fIncome = fTemp
+                    bIntValid = True
+            except:
+                print("Input Not Valid")
+
+    def setPayIncrementMenu(self):
+        self.clearScreen()
+        strInput = "0"
+        print("Select Pay Increment")
+        print("1) Hourly ({})".format(self.iHours))
+        print("2) Daily")
+        print("3) Weekly")
+        print("4) Fortnightly")
+        print("5) Monthly")
+        print("6) Annually")
+        while(not self.verifyPayInput(strInput)):
+            strInput = input(
+                "Enter Increment ({}): ".format(self.strIncrement))
+
+    def verifyPayInput(self, strInput):
+        try:
+            iInput = int(strInput)
+            if(iInput == 0):
+                return False
+            elif(iInput < 0 or iInput > 6):
+                raise Exception("Value is Incorrect")
+            else:
+                ## WHY NO SWITCH CASE PYTHON!!!
+                self.iIncrement = iInput
+                if(iInput == 1):
+                    self.strIncrement = "Hourly"
+                    self.iIncrement = 1
+                    self.verifyHours()
+                elif(iInput == 2):
+                    self.strIncrement = "Daily"
+                elif(iInput == 3):
+                    self.strIncrement = "Weekly"
+                elif(iInput == 4):
+                    self.strIncrement = "Fortnightly"
+                elif(iInput == 5):
+                    self.strIncrement = "Monthly"
+                elif(iInput == 6):
+                    self.strIncrement = "Annually"
+                return True
+        except:
+            print("Invalid Entry")
+            return False
+
+    def verifyHours(self):
+        while(True):
+            strInput = input("Enter Hours worked ({}): ".format(self.iHours))
+            try:
+                iInput = int(strInput)
+                if(iInput <= 0):
+                    raise Exception("Invalid Hours")
+                else:
+                    self.iHours = iInput
+                    break
+            except:
+                print("Invalid Hours Entered!!")
+    
+    def setTaxOptions(self):
+        
+        bContinue = True
+        while(bContinue):
+            self.clearScreen()
+            print("Enter an input to toggle a tax option")
+            print("1) HECS/HELP ({})".format(self.bHECS))
+            print("2) No Tax Free Threshold ({})".format(self.bNTFT))
+            print("3) Salary Include Superannuation ({})".format(self.bSuper))
+            print("4) Back to Menu")
+            strInput = input("Enter Selection: ")
+            try:
+                iInput = int(strInput)
+                if(iInput < 0 or iInput > 4):
+                    raise Exception("Invalid Number")
+                else:
+                    if iInput == 4:
+                        bContinue = False
+                        break
+                    elif iInput == 1:
+                        self.bHECS = not self.bHECS
+                    elif iInput == 2:
+                        self.bNTFT = not self.bNTFT
+                    elif iInput == 3:
+                        self.bSuper = not self.bSuper
+            except:
+                print("Invalid Input!!")
 
     def clearScreen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
+
+    def checkValid(self):
+        if self.fIncome > 0:
+            self.bAllItemsSet = True
 
 
 """
@@ -71,6 +178,3 @@ class CLI:
 3) Set Tax Options (HECS/HELP: False, Tax Free Threshold: False, Include Superannuation: False)
 4) Calculate
 """
-
-
-    
