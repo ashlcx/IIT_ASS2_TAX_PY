@@ -3,6 +3,7 @@ import os
 import sys
 
 import constants
+import calculate
 
 
 class CLI:
@@ -14,7 +15,8 @@ class CLI:
         self.dictOptions = {
             "bHECS": False,
             "bNTFT": False,
-            "bSuper": False
+            "bSuper": False,
+            "iFY": 2021
         }
         self.bAllItemsSet = False
         self.iHours = 40
@@ -60,7 +62,7 @@ class CLI:
             self.setTaxOptions()
             return True
         elif(iStrSelection == 4 and self.bAllItemsSet):
-            print("Calculate")
+            self.cliCalc()
             return True
         elif((iStrSelection == 4 and not self.bAllItemsSet) or iStrSelection == 5):
             sys.exit(0)
@@ -150,14 +152,15 @@ class CLI:
                 self.dictOptions.get("bNTFT")))
             print("3) Salary Include Superannuation ({})".format(
                 self.dictOptions.get("bSuper")))
-            print("4) Back to Menu")
+            print("4) Set Finincal Year (2020/2021)")
+            print("5) Back to Menu")
             strInput = input("Enter Selection: ")
             try:
                 iInput = int(strInput)
-                if(iInput < 0 or iInput > 4):
+                if(iInput < 0 or iInput > 5):
                     raise Exception("Invalid Number")
                 else:
-                    if iInput == 4:
+                    if iInput == 5:
                         bContinue = False
                         break
                     elif iInput == 1:
@@ -169,8 +172,16 @@ class CLI:
                     elif iInput == 3:
                         self.dictOptions.update(
                             {"bSuper": not self.dictOptions.get("bSuper")})
+                    elif iInput == 4:
+                        self.dictOptions.update({
+                            "iFY": 2021
+                        })
+                        #TODO Set Year
             except:
                 print("Invalid Input!!")
+
+    def cliCalc(self):
+        calc = calculate.taxCalculations(self.fIncome, self.strIncrement, self.dictOptions, cli=True)
 
     def clearScreen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
