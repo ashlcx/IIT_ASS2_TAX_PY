@@ -2,7 +2,7 @@
 import os
 import sys
 
-import constants
+import constants as C
 import calculate
 
 
@@ -27,12 +27,12 @@ class CLI:
         while(True):
             self.clearScreen()
             self.checkValid()
-            print("Pay Calculator V{}".format(constants.C_VERSION))
+            print("Pay Calculator V{}".format(C.C_VERSION))
             print("1) Set Income (${})".format(self.fIncome))
             print("2) Set Pay Increment ({})".format(self.strIncrement) if not self.strIncrement ==
                   "Hourly" else "2) Set Pay Increment ({} ({} Hours))".format(self.strIncrement, self.iHours))
-            print("3) Set Tax Options (HECS/HELP: {}, No Tax Free Threshold: {}, Include Superannuation: {})".format(
-                self.dictOptions.get("bHECS"), self.dictOptions.get("bNTFT"), self.dictOptions.get("bSuper")))
+            print("3) Set Tax Options (HECS/HELP: {}, No Tax Free Threshold: {}, Include Superannuation: {}, FY{})".format(
+                self.dictOptions.get("bHECS"), self.dictOptions.get("bNTFT"), self.dictOptions.get("bSuper"), self.dictOptions.get("iFY")))
             if self.bAllItemsSet:
                 print("4) Calculate")
                 iIncrement = 5
@@ -132,8 +132,10 @@ class CLI:
         while(True):
             strInput = input("Enter Hours worked ({}): ".format(self.iHours))
             try:
+                if(strInput == ""): #Enter Follows with using current values
+                    break
                 iInput = int(strInput)
-                if(iInput <= 0):
+                if(iInput < 0):
                     raise Exception("Invalid Hours")
                 else:
                     self.iHours = iInput
@@ -152,7 +154,7 @@ class CLI:
                 self.dictOptions.get("bNTFT")))
             print("3) Salary Include Superannuation ({})".format(
                 self.dictOptions.get("bSuper")))
-            print("4) Set Finincal Year (2020/2021)")
+            print("4) Set Finincal Year ({})".format(self.dictOptions.get("iFY")))
             print("5) Back to Menu")
             strInput = input("Enter Selection: ")
             try:
@@ -173,16 +175,43 @@ class CLI:
                         self.dictOptions.update(
                             {"bSuper": not self.dictOptions.get("bSuper")})
                     elif iInput == 4:
+                        iFY = self.getFYYear()
                         self.dictOptions.update({
-                            "iFY": 2021
+                            "iFY": iFY
                         })
-                        #TODO Set Year
+                        #print(self.dictOptions.get("iFY"))
             except:
                 print("Invalid Input!!")
 
+    def getFYYear(self) -> int:
+        while(True):
+            #Get FY year from C
+            i = 1
+            print("Select Year")
+            for year in C.C_FY:
+                print("{}) FY{}".format(i, year))
+                i+=1
+            strInput = input("Enter Selection: ")
+            try:
+                iInput = int(strInput)
+                if (iInput <= 0):
+                    raise Exception("Value < 0")
+                elif (iInput > len(C.C_FY)):
+                    raise Exception("Input higher than tuple")
+                else:
+                    return C.C_FY[iInput - 1] # Convert starting from 1 to 0.
+            #
+            except:
+                print("Invalid Input!!")
     def cliCalc(self):
-        calc = calculate.taxCalculations(self.fIncome, self.strIncrement, self.dictOptions, cli=True)
-
+        calcClass = calculate.taxCalculations(self.fIncome, self.strIncrement, self.dictOptions, cli=True)
+        objectResult = calcClass.calculate()
+        if(objectResult["error"]):
+            # This Should never occur
+            print("An Error Occured calculating.. Please check entered values")
+            input("Press enter to continue")
+        else:
+            print("Calculating")
     def clearScreen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
