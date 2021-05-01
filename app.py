@@ -2,7 +2,7 @@ import sys
 
 import GUI
 import CLI
-import constants
+import constants as C
 
 if __name__ == "__main__":
     # Get System Args to check if GUI or CLI
@@ -13,7 +13,7 @@ if __name__ == "__main__":
             # Begin CLI
             Cli = CLI.CLI()
         else:
-            print("Pay Calculator {}".format(constants.C_VERSION))
+            print("Pay Calculator {}".format(C.C_VERSION))
             print(
                 "Invalid Argument - Syntax should be 'python3 app.py cli' or 'python3 app.py'")
             sys.exit(1)
