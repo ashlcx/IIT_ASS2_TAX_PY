@@ -70,7 +70,7 @@ class CLI:
         self.__clearScreen()
         bIntValid = False
         while(not bIntValid):
-            strTempIncome = input("Enter Income for Time Period (${} {}):".format(
+            strTempIncome = input("Enter Income for Time Period (${} {}): ".format(
                 self.fIncome, self.strIncrement))
             try:
                 fTemp = float(strTempIncome)
