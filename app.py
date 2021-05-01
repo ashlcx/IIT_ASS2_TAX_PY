@@ -11,7 +11,8 @@ if __name__ == "__main__":
         # print(sys.argv[1].lower())
         if(sys.argv[1].lower() == "cli"):
             # Begin CLI
-            Cli = CLI.CLI()
+            cli = CLI.CLI()
+            cli.cliMenu()
         else:
             print("Pay Calculator {}".format(C.C_VERSION))
             print(
