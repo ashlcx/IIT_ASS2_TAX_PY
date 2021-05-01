@@ -5,7 +5,6 @@ import sys
 import constants as CONSTS
 import calculate
 
-
 class CLI:
     def __init__(self):
 
@@ -202,10 +201,92 @@ class CLI:
             except:
                 print("Invalid Input!!")
     def __cliCalc(self):
-        calcClass = calculate.taxCalculations(self.fIncome, self.strIncrement, self.dictOptions, cli=True)
-        self.dictCalcResult = calcClass.calculate()
-        print(self.dictCalcResult)
-        input()
+        calcClass = calculate.taxCalculations(self.fIncome, self.strIncrement, self.dictOptions, self.iHours, cli=True)
+        self.dictCalcResult, self.iHours = calcClass.calculate()
+        self.__calculateIncrementVaribles()
+        self.__displayResponse()
+
+    def __calculateIncrementVaribles(self):
+        #hourly
+        self.INCHourly = {}
+        self.INCHourly.update({"Increment": "Hourly ({})".format(self.iHours)})
+        self.INCHourly.update({"taxableIncome": (self.dictCalcResult.get("taxableIncome") / CONSTS.C_WEEKSPYEAR / self.iHours)})
+        self.INCHourly.update({"grossIncome": (self.dictCalcResult.get("grossIncome") / CONSTS.C_WEEKSPYEAR / self.iHours)})
+        self.INCHourly.update({"super": (self.dictCalcResult.get("super") / CONSTS.C_WEEKSPYEAR / self.iHours)})
+        self.INCHourly.update({"medicareLevy": (self.dictCalcResult.get("medicareLevy") / CONSTS.C_WEEKSPYEAR / self.iHours)})
+        self.INCHourly.update({"tax": (self.dictCalcResult.get("tax") / CONSTS.C_WEEKSPYEAR / self.iHours)})
+        self.INCHourly.update({"hecsOwed": (self.dictCalcResult.get("hecsOwed") / CONSTS.C_WEEKSPYEAR / self.iHours)})
+        self.INCHourly.update({"totalTax": (self.dictCalcResult.get("totalTax") / CONSTS.C_WEEKSPYEAR / self.iHours)})
+        #Daily
+        self.INCDaily = {}
+        self.INCDaily.update({"Increment": "Daily"})
+        self.INCDaily.update({"taxableIncome": (self.dictCalcResult.get("taxableIncome") / CONSTS.C_WEEKSPYEAR / 5)})
+        self.INCDaily.update({"grossIncome": (self.dictCalcResult.get("grossIncome") / CONSTS.C_WEEKSPYEAR / 5)})
+        self.INCDaily.update({"super": (self.dictCalcResult.get("super") / CONSTS.C_WEEKSPYEAR / 5)})
+        self.INCDaily.update({"medicareLevy": (self.dictCalcResult.get("medicareLevy") / CONSTS.C_WEEKSPYEAR / 5)})
+        self.INCDaily.update({"tax": (self.dictCalcResult.get("tax") / CONSTS.C_WEEKSPYEAR / 5)})
+        self.INCDaily.update({"hecsOwed": (self.dictCalcResult.get("hecsOwed") / CONSTS.C_WEEKSPYEAR / 5)})
+        self.INCDaily.update({"totalTax": (self.dictCalcResult.get("totalTax") / CONSTS.C_WEEKSPYEAR / 5)})
+        #Weekly
+        self.INCWeekly = {}
+        self.INCWeekly.update({"Increment": "Weekly"})
+        self.INCWeekly.update({"taxableIncome": (self.dictCalcResult.get("taxableIncome") / CONSTS.C_WEEKSPYEAR)})
+        self.INCWeekly.update({"grossIncome": (self.dictCalcResult.get("grossIncome") / CONSTS.C_WEEKSPYEAR)})
+        self.INCWeekly.update({"super": (self.dictCalcResult.get("super") / CONSTS.C_WEEKSPYEAR)})
+        self.INCWeekly.update({"medicareLevy": (self.dictCalcResult.get("medicareLevy") / CONSTS.C_WEEKSPYEAR)})
+        self.INCWeekly.update({"tax": (self.dictCalcResult.get("tax") / CONSTS.C_WEEKSPYEAR)})
+        self.INCWeekly.update({"hecsOwed": (self.dictCalcResult.get("hecsOwed") / CONSTS.C_WEEKSPYEAR)})
+        self.INCWeekly.update({"totalTax": (self.dictCalcResult.get("totalTax") / CONSTS.C_WEEKSPYEAR)})
+        #Fortnightly
+        self.INCFornightly = {}
+        self.INCFornightly.update({"Increment": "Fortnightly"})
+        self.INCFornightly.update({"taxableIncome": (self.dictCalcResult.get("taxableIncome") / (CONSTS.C_WEEKSPYEAR /2 ))})
+        self.INCFornightly.update({"grossIncome": (self.dictCalcResult.get("grossIncome") / (CONSTS.C_WEEKSPYEAR /2 ))})
+        self.INCFornightly.update({"super": (self.dictCalcResult.get("super") / (CONSTS.C_WEEKSPYEAR /2 ))})
+        self.INCFornightly.update({"medicareLevy": (self.dictCalcResult.get("medicareLevy") / (CONSTS.C_WEEKSPYEAR /2 ))})
+        self.INCFornightly.update({"tax": (self.dictCalcResult.get("tax") / (CONSTS.C_WEEKSPYEAR /2 ))})
+        self.INCFornightly.update({"hecsOwed": (self.dictCalcResult.get("hecsOwed") / (CONSTS.C_WEEKSPYEAR /2 ))})
+        self.INCFornightly.update({"totalTax": (self.dictCalcResult.get("totalTax") / (CONSTS.C_WEEKSPYEAR /2 ))})
+        #Monthly
+        self.INCMonthly = {}
+        self.INCMonthly.update({"Increment": "Monthly"})
+        self.INCMonthly.update({"taxableIncome": (self.dictCalcResult.get("taxableIncome") / 12)})
+        self.INCMonthly.update({"grossIncome": (self.dictCalcResult.get("grossIncome") / 12)})
+        self.INCMonthly.update({"super": (self.dictCalcResult.get("super") / 12)})
+        self.INCMonthly.update({"medicareLevy": (self.dictCalcResult.get("medicareLevy") / 12)})
+        self.INCMonthly.update({"tax": (self.dictCalcResult.get("tax") / 12)})
+        self.INCMonthly.update({"hecsOwed": (self.dictCalcResult.get("hecsOwed") / 12)})
+        self.INCMonthly.update({"totalTax": (self.dictCalcResult.get("totalTax") / 12)})
+
+        self.dictCalcResult.update({"Increment": "Annually"})
+    
+    def __displayResponse(self):
+        self.__clearScreen()
+        print("Results: ")
+        """ print(self.INCHourly)
+        print(self.INCDaily)
+        print(self.INCWeekly)
+        print(self.INCFornightly)
+        print(self.INCMonthly)
+        print(self.dictCalcResult) """
+        #TABLE
+        format_titlerow = "{:>15}" * len(self.INCDaily)
+        format_row = "{:>15}" + ("{:>15.2f}" * (len(self.INCDaily) -1))
+        rows = (self.INCHourly, self.INCDaily ,self.INCWeekly ,self.INCFornightly,self.INCMonthly, self.dictCalcResult)
+        print(format_titlerow.format(*self.INCDaily))
+        for increment in rows:
+            finc = increment["Increment"]
+            ftaxableIncome = increment["taxableIncome"]
+            fgrossIncome = increment["grossIncome"]
+            fsuper = increment["super"]
+            fmedicareLevy = increment["medicareLevy"]
+            ftax = increment["tax"]
+            fhecsOwed = increment["hecsOwed"]
+            ftotalTax = increment["totalTax"]
+            values = (finc, ftaxableIncome,fgrossIncome, fsuper, fmedicareLevy, ftax, fhecsOwed, ftotalTax)
+            print(format_row.format(*values))
+        input("Press Enter to return")
+
         
     def __clearScreen(self):
         os.system('cls' if os.name == 'nt' else 'clear')

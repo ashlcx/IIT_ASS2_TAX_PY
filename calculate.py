@@ -4,13 +4,15 @@ import constants as C
 
 class taxCalculations:
 
-    def __init__(self, income, payIncrement,taxOptions, hours=40, cli=False):
-        print("Calculating")
+    def __init__(self, income, payIncrement,taxOptions, hours, cli=False):
         #Get Tax Rates
         self.income = income
         self.payIncrement = payIncrement
         self.taxOptions = taxOptions
-        self.hours = hours
+        if(payIncrement == C.C_INCREMENT_HOURLY):
+            self.hours = hours
+        else:
+            self.hours = 40
         self.cli = cli
         try:
             with open(C.C_TAXFILE) as fileTaxRates:
@@ -18,13 +20,12 @@ class taxCalculations:
                 #print("type: ", type(self. jsonData))
                 iFY = taxOptions.get("iFY")
                 self.taxRates = jsonData["t{}".format(iFY)]
-                print(end="") #DEBUG PAUSE
         except:
             print("FATAL EXCEPTION: Cannot grab {}; Now Exiting".format(C.C_TAXFILE))
             sys.exit(1) # sys.exit(1) Indicate non normal exit code
 
 
-    def calculate(self) -> object:
+    def calculate(self) -> dict:
         
         self.__calcTaxableIncomeToAnnually()
         self.__calculateTax()
@@ -41,7 +42,7 @@ class taxCalculations:
             "hecsOwed": self.hecsOwed,
             "totalTax": self.totaltax,
         }
-        return dictResponse
+        return dictResponse, self.hours
     
     def __calcTaxableIncomeToAnnually(self):
         
@@ -58,7 +59,6 @@ class taxCalculations:
             self.taxableIncome = self.income * 12 #TODO #1 Incorporate Leave
         else:
             self.taxableIncome = self.income
-        print(self.taxableIncome)
         #PROCESS SUPERANNUATION
 
         superPercentage = 9.5 / 100
@@ -66,7 +66,6 @@ class taxCalculations:
         if(self.taxOptions.get("bSuper")):
             self.fSuper = (self.taxableIncome / (1 + superPercentage) * superPercentage)
             self.taxableIncome -= self.fSuper
-            print(self.fSuper)
         else:
             self.fSuper = self.taxableIncome * superPercentage
         
@@ -89,7 +88,6 @@ class taxCalculations:
             #print(taxTable[i])
             if(remainingTaxableIncome > taxTable[i][0]):
                 tax = (remainingTaxableIncome - taxTable[i][0]) * taxTable[i][1]
-                print(tax)
                 self.tax += tax
                 remainingTaxableIncome = taxTable[i][0]
         #print(self.tax)
