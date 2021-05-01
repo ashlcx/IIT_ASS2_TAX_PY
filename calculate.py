@@ -55,7 +55,7 @@ class taxCalculations:
         elif(self.payIncrement == C.C_INCREMENT_FORTNIGHTLY):
             self.taxableIncome = self.income * C.C_WEEKSPYEAR / 2
         elif(self.payIncrement == C.C_INCREMENT_MONTHLY):
-            self.taxableIncome = self.income * 12 #TODO Incorporate Leave
+            self.taxableIncome = self.income * 12 #TODO #1 Incorporate Leave
         else:
             self.taxableIncome = self.income
         print(self.taxableIncome)
