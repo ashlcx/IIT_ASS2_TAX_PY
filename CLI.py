@@ -2,7 +2,7 @@
 import os
 import sys
 
-import constants as C
+import constants as CONSTS
 import calculate
 
 
@@ -10,7 +10,7 @@ class CLI:
     def __init__(self):
 
         self.fIncome = 0
-        self.strIncrement = "Annually"
+        self.strIncrement = CONSTS.C_INCREMENT_ANNUALLY
         self.iIncrement = 6
         self.dictOptions = {
             "bHECS": False,
@@ -21,13 +21,11 @@ class CLI:
         self.bAllItemsSet = False
         self.iHours = 40
 
-        self.cliMenu()
-
     def cliMenu(self):
         while(True):
-            self.clearScreen()
-            self.checkValid()
-            print("Pay Calculator V{}".format(C.C_VERSION))
+            self.__clearScreen()
+            self.__checkValid()
+            print("Pay Calculator V{}".format(CONSTS.C_VERSION))
             print("1) Set Income (${})".format(self.fIncome))
             print("2) Set Pay Increment ({})".format(self.strIncrement) if not self.strIncrement ==
                   "Hourly" else "2) Set Pay Increment ({} ({} Hours))".format(self.strIncrement, self.iHours))
@@ -41,10 +39,10 @@ class CLI:
             print("{}) Exit".format(str(iIncrement)))
 
             strSelection = "0"
-            while(not self.verifyMenuInput(strSelection)):
+            while(not self.__verifyMenuInput(strSelection)):
                 strSelection = input("Enter Selection: ")
 
-    def verifyMenuInput(self, strSelection) -> bool:
+    def __verifyMenuInput(self, strSelection) -> bool:
         try:
             iStrSelection = int(strSelection)
         except:
@@ -53,24 +51,24 @@ class CLI:
             return False
         elif(iStrSelection == 1):
             # print("SetIncomeMenu")
-            self.setIncomeMenu()
+            self.__setIncomeMenu()
             return True
         elif(iStrSelection == 2):
-            self.setPayIncrementMenu()
+            self.__setPayIncrementMenu()
             return True
         elif(iStrSelection == 3):
-            self.setTaxOptions()
+            self.__setTaxOptions()
             return True
         elif(iStrSelection == 4 and self.bAllItemsSet):
-            self.cliCalc()
+            self.__cliCalc()
             return True
         elif((iStrSelection == 4 and not self.bAllItemsSet) or iStrSelection == 5):
             sys.exit(0)
         else:
             return False
 
-    def setIncomeMenu(self):
-        self.clearScreen()
+    def __setIncomeMenu(self):
+        self.__clearScreen()
         bIntValid = False
         while(not bIntValid):
             strTempIncome = input("Enter Income for Time Period (${} {}):".format(
@@ -85,8 +83,8 @@ class CLI:
             except:
                 print("Input Not Valid")
 
-    def setPayIncrementMenu(self):
-        self.clearScreen()
+    def __setPayIncrementMenu(self):
+        self.__clearScreen()
         strInput = "0"
         print("Select Pay Increment")
         print("1) Hourly ({})".format(self.iHours))
@@ -95,11 +93,11 @@ class CLI:
         print("4) Fortnightly")
         print("5) Monthly")
         print("6) Annually")
-        while(not self.verifyPayInput(strInput)):
+        while(not self.__verifyPayInput(strInput)):
             strInput = input(
                 "Enter Increment ({}): ".format(self.strIncrement))
 
-    def verifyPayInput(self, strInput):
+    def __verifyPayInput(self, strInput):
         try:
             iInput = int(strInput)
             if(iInput == 0):
@@ -110,25 +108,25 @@ class CLI:
                 # WHY NO SWITCH CASE PYTHON!!!
                 self.iIncrement = iInput
                 if(iInput == 1):
-                    self.strIncrement = "Hourly"
+                    self.strIncrement = CONSTS.C_INCREMENT_HOURLY
                     self.iIncrement = 1
-                    self.verifyHours()
+                    self.__verifyHours()
                 elif(iInput == 2):
-                    self.strIncrement = "Daily"
+                    self.strIncrement = CONSTS.C_INCREMENT_DAILY
                 elif(iInput == 3):
-                    self.strIncrement = "Weekly"
+                    self.strIncrement = CONSTS.C_INCREMENT_WEEKLY
                 elif(iInput == 4):
-                    self.strIncrement = "Fortnightly"
+                    self.strIncrement = CONSTS.C_INCREMENT_FORTNIGHTLY
                 elif(iInput == 5):
-                    self.strIncrement = "Monthly"
+                    self.strIncrement = CONSTS.C_INCREMENT_MONTHLY
                 elif(iInput == 6):
-                    self.strIncrement = "Annually"
+                    self.strIncrement = CONSTS.C_INCREMENT_ANNUALLY
                 return True
         except:
             print("Invalid Entry")
             return False
 
-    def verifyHours(self):
+    def __verifyHours(self):
         while(True):
             strInput = input("Enter Hours worked ({}): ".format(self.iHours))
             try:
@@ -143,11 +141,11 @@ class CLI:
             except:
                 print("Invalid Hours Entered!!")
 
-    def setTaxOptions(self):
+    def __setTaxOptions(self):
 
         bContinue = True
         while(bContinue):
-            self.clearScreen()
+            self.__clearScreen()
             print("Enter an input to toggle a tax option")
             print("1) HECS/HELP ({})".format(self.dictOptions.get("bHECS")))
             print("2) No Tax Free Threshold ({})".format(
@@ -175,7 +173,7 @@ class CLI:
                         self.dictOptions.update(
                             {"bSuper": not self.dictOptions.get("bSuper")})
                     elif iInput == 4:
-                        iFY = self.getFYYear()
+                        iFY = self.__getFYYear()
                         self.dictOptions.update({
                             "iFY": iFY
                         })
@@ -183,12 +181,12 @@ class CLI:
             except:
                 print("Invalid Input!!")
 
-    def getFYYear(self) -> int:
+    def __getFYYear(self) -> int:
         while(True):
-            #Get FY year from C
+            #Get FY year from CONSTS
             i = 1
             print("Select Year")
-            for year in C.C_FY:
+            for year in CONSTS.C_FY:
                 print("{}) FY{}".format(i, year))
                 i+=1
             strInput = input("Enter Selection: ")
@@ -196,26 +194,23 @@ class CLI:
                 iInput = int(strInput)
                 if (iInput <= 0):
                     raise Exception("Value < 0")
-                elif (iInput > len(C.C_FY)):
+                elif (iInput > len(CONSTS.C_FY)):
                     raise Exception("Input higher than tuple")
                 else:
-                    return C.C_FY[iInput - 1] # Convert starting from 1 to 0.
+                    return CONSTS.C_FY[iInput - 1] # Convert starting from 1 to 0.
             #
             except:
                 print("Invalid Input!!")
-    def cliCalc(self):
+    def __cliCalc(self):
         calcClass = calculate.taxCalculations(self.fIncome, self.strIncrement, self.dictOptions, cli=True)
-        objectResult = calcClass.calculate()
-        if(objectResult["error"]):
-            # This Should never occur
-            print("An Error Occured calculating.. Please check entered values")
-            input("Press enter to continue")
-        else:
-            print("Calculating")
-    def clearScreen(self):
+        self.dictCalcResult = calcClass.calculate()
+        print(self.dictCalcResult)
+        input()
+        
+    def __clearScreen(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def checkValid(self):
+    def __checkValid(self):
         if self.fIncome > 0:
             self.bAllItemsSet = True
 
