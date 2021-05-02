@@ -270,7 +270,7 @@ class CLI:
         # Creates TABLE
         tempRow = self.rows[0]
         format_titlerow = "{:>15}" * len(tempRow)
-        format_row = "{:>15}" + ("{:>15.2f}" * (len(tempRow) - 1))
+        format_row = "{:<15}" + ("${:<15.2f}" * (len(tempRow) - 1)) #TODO #5 Add Dollar symbols
         print(format_titlerow.format(*tempRow))
         # for each increment display the details
         for increment in self.rows:
