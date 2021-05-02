@@ -30,6 +30,8 @@ class GUI:
         self.mainWindow.config(bg="#FFFFFF") # Set background as white to match Mac
         self.__createMenuBar()
         self.__initLayout()
+        ## Welcome Message
+        self.createPopup("Welcome", "Hello. This is a program to determine taxes and pay\nbased off a taxable income for various pay increments")
 
     ## creates the menu bar
     def __createMenuBar(self):
@@ -54,13 +56,13 @@ class GUI:
 
     ## calls create popup showing the about details
     def __popupAbout(self):
-        self.__createPopup(
+        self.createPopup(
             "About", "PayCalculator V{}\nAuthor: Ash Hines".format(CONSTS.C_VERSION)
         )
 
     ## calls create popup showing the license details
     def __popupLicense(self):
-        self.__createPopup(
+        self.createPopup(
             "License",
             (
                 """
@@ -245,7 +247,7 @@ limitations under the License.
         try:
             fIncome = float(self.__fIncome.get())
             if fIncome < 0:
-                self.__createPopup("Error", "Income must be positive")
+                self.createPopup("Error", "Income must be positive")
                 raise Exception("Income must be positive")
             self.__calculations = calculate.taxCalculations(
                 fIncome,
@@ -260,7 +262,7 @@ limitations under the License.
         except Exception as e:
             ## Displays error info into terminal
             print(str(e))
-            self.__createPopup("Error", "Invalid Input", "200x75")
+            self.createPopup("Error", "Invalid Input", "200x75")
 
     ## For debugging
     def __breakpoint(self):
@@ -268,7 +270,7 @@ limitations under the License.
         pass
 
     ## Creates a poppup message
-    def __createPopup(self, title, msg, size="auto"):
+    def createPopup(self, title, msg, size="auto"):
         popupWindow = tk.Tk()
         if size == "auto":
             pass

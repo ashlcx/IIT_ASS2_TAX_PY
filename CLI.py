@@ -49,7 +49,8 @@ class CLI:
         while True:
             self.__clearScreen()
             self.__checkValid()
-            print("Pay Calculator V{}".format(CONSTS.C_VERSION))
+            print("Pay Calculator V{} - Ashley Hines 2021".format(CONSTS.C_VERSION))
+            print("An Application to calculate your income and taxes") ## Welcome Message
             print("1) Set Income (${})".format(self.__fIncome))
             print(
                 "2) Set Pay Increment ({})".format(self.__strIncrement)
