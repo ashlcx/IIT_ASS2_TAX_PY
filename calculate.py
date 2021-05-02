@@ -71,7 +71,7 @@ class taxCalculations:
         elif(self.payIncrement == CONSTS.C_INCREMENT_FORTNIGHTLY):
             self.taxableIncome = self.income * CONSTS.C_WEEKSPYEAR / 2
         elif(self.payIncrement == CONSTS.C_INCREMENT_MONTHLY):
-            self.taxableIncome = self.income * 12 #TODO #1 Incorporate Leave
+            self.taxableIncome = self.income * 12 
         else:
             self.taxableIncome = self.income
         #PROCESS SUPERANNUATION
