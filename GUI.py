@@ -27,6 +27,7 @@ class GUI:
         ## Creates the main window and call the layout initalisers
         self.mainWindow = tk.Tk()
         self.mainWindow.title("Pay Calculator")
+        self.mainWindow.config(bg="#FFFFFF") # Set background as white to match Mac
         self.__createMenuBar()
         self.__initLayout()
 
