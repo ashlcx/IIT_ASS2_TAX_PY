@@ -15,7 +15,6 @@ limitations under the License.
 
 Formatted in accordance with PEP-8 Using Black
 """
-# TODO #3 Fix variables and comments
 import constants as CONSTS
 import calculate
 import tkinter as tk
